@@ -44,5 +44,9 @@ class YOLOX(nn.Module):
             }
         else:
             outputs = self.head(fpn_outs)
+        
+        # the following 2 lines is for onnx exporting use 
+        # outputs = outputs.unsqueeze(3)
+        # print(type(outputs), outputs.shape) # <class 'torch.Tensor'> torch.Size([1, 84, 85])
 
         return outputs
