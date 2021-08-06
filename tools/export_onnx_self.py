@@ -63,7 +63,7 @@ def main():
     model = exp.get_model()
     if args.ckpt is None:
         file_name = os.path.join(exp.output_dir, args.experiment_name)
-        ckpt_file = os.path.join(file_name, "best_ckpt.pth")
+        ckpt_file = os.path.join(file_name, "best_ckpt.pth.tar")
     else:
         ckpt_file = args.ckpt
 
@@ -78,15 +78,20 @@ def main():
     model.head.decode_in_inference = False
 
     logger.info("loading checkpoint done.")
+      
+    
     dummy_input = torch.randn(1, 3, exp.test_size[0], exp.test_size[1])
+    dynamic_ax = {str(args.input) : {0: "batch"}, "output": {0: "batch"}}  
+    print(dynamic_ax)
 
     torch.onnx._export(
         model,
-        dummy_input, 
-        args.output_name, 
-        input_names=[args.input], 
-        output_names=[args.output], 
+        dummy_input, # (1, 3, 416, 416)
+        args.output_name, # yolox_tiny_zlb.onnx
+        input_names=[args.input], # [images]
+        output_names=[args.output], # [output]
         opset_version=args.opset, # 11
+        dynamic_axes = dynamic_ax # {'images': {0: 'batch'}, 'output': {0: 'batch'}}
     )
     logger.info("generated onnx model named {}".format(args.output_name))
 
@@ -94,11 +99,12 @@ def main():
         import onnx
 
         from onnxsim import simplify
+        print("onnx simplifing...")
 
         # use onnxsimplify to reduce reduent model.
         onnx_model = onnx.load(args.output_name)
         model_simp, check = simplify(onnx_model)
-        assert check, "Simplified ONNX model could not be validated"
+        assert check, "Simplified ONNX model could not be validated" 
         onnx.save(model_simp, args.output_name)
         logger.info("generated simplified onnx model named {}".format(args.output_name))
 
