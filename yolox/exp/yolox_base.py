@@ -18,7 +18,8 @@ class Exp(BaseExp):
         super().__init__()
 
         # ---------------- model config ---------------- #
-        self.num_classes = 80
+        # self.num_classes = 80
+        self.num_classes = 6
         self.depth = 1.00
         self.width = 1.00
 
@@ -52,8 +53,10 @@ class Exp(BaseExp):
 
         self.weight_decay = 5e-4
         self.momentum = 0.9
-        self.print_interval = 10
-        self.eval_interval = 10
+        # self.print_interval = 10
+        # self.eval_interval = 10
+        self.print_interval = 1
+        self.eval_interval = 1
         self.exp_name = os.path.split(os.path.realpath(__file__))[1].split(".")[0]
 
         # -----------------  testing config ------------------ #
