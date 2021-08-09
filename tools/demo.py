@@ -139,11 +139,16 @@ class Predictor(object):
         if self.device == "gpu":
             img = img.cuda()
 
+        # inference !!!
         with torch.no_grad():
             t0 = time.time()
             outputs = self.model(img)
+            print('outputs from model(img) : {}'.format(outputs.shape))
+
             if self.decoder is not None:
                 outputs = self.decoder(outputs, dtype=outputs.type())
+            
+            # print('outputs after decoder : {}'.format(outputs.shape))
             outputs = postprocess(
                 outputs, self.num_classes, self.confthre, self.nmsthre
             )
