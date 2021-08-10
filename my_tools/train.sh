@@ -1,0 +1,1 @@
+nohup python3 tools/train.py -f exps/example/yolox_voc/yolox_voc_s.py -d 4 -b 256 --fp16 -o -c weight/yolox_s.pth 2>&1 &
