@@ -96,7 +96,7 @@ def save_xml(image_path, bbox, label, annotion_dir='/opt/tiger/minist/datasets/g
     xml = tostring(node_root, pretty_print=True)  
     # dom = parseString(xml)
 
-    save_xml = os.path.join(annotion_dir, image_name.replace('.jpg', '.xml'))
+    save_xml = os.path.join(annotion_dir, image_name[:-4] + '.xml')
     with open(save_xml, 'wb') as f:
         f.write(xml)
 
