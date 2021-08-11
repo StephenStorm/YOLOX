@@ -73,6 +73,7 @@ if __name__ == '__main__':
     ort_inputs = {session.get_inputs()[0].name: img[None, :, :, :]}
     output = session.run(None, ort_inputs)
     predictions = demo_postprocess(output[0], input_shape, p6=args.with_p6)[0]
+    print(predictions.shape)
 
     boxes = predictions[:, :4]
     scores = predictions[:, 4:5] * predictions[:, 5:]
@@ -83,7 +84,9 @@ if __name__ == '__main__':
     boxes_xyxy[:, 2] = boxes[:, 0] + boxes[:, 2]/2.
     boxes_xyxy[:, 3] = boxes[:, 1] + boxes[:, 3]/2.
     boxes_xyxy /= ratio
+    # stephen change :
     dets = multiclass_nms(boxes_xyxy, scores, nms_thr=0.45, score_thr=0.1)
+    # dets = 
     if dets is not None:
         final_boxes, final_scores, final_cls_inds = dets[:, :4], dets[:, 4], dets[:, 5]
         origin_img = vis(origin_img, final_boxes, final_scores, final_cls_inds,

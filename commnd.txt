@@ -1,0 +1,3 @@
+onnx infer :
+    python3 onnx_inference.py -m /opt/tiger/minist/YOLOX/weight/yolox_tiny_32dot8.onnx -i /opt/tiger/minist/YOLOX/assets/hasiqi/v0300fg10000c40ugcrc77u3ikfhn56g_0.jpg  -s 0.3 --input_shape 416,416
+
