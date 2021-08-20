@@ -2,9 +2,10 @@ import os
 import urllib.request as urlrequest
 import multiprocessing as mp 
 import json
+import sys
 
 def download(image_path):
-    save_root = '/opt/tiger/minist/datasets/groot/train/'
+    save_root = '/opt/tiger/minist/datasets/groot_voc/JPEGImages'
     if not os.path.exists(save_root):
         os.makedirs(save_root)
     try_times = 0
@@ -29,7 +30,7 @@ def download(image_path):
 if __name__ == "__main__":
     count = 0
     url_lst = []
-    file = '/opt/tiger/minist/datasets/groot/groot_det_train_wy_20210729._processed.json'
+    file = '/opt/tiger/minist/data_process/res_data/new_img_in_val.txt'
     with open(file) as f:
         for line in f:
             json_line = json.loads(line)
@@ -42,7 +43,9 @@ if __name__ == "__main__":
             url_lst.append(img_url)
 
     print('images nums : {}'.format(len(url_lst)))
-    num_workers = 20
+    # print(url_lst[:3])
+    # sys.exit()
+    num_workers = 30
     p = mp.Pool(num_workers)
     p.map(download, url_lst)
 

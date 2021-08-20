@@ -139,6 +139,7 @@ class VOCDetection(Dataset):
             img, target
         """
         img_id = self.ids[index]
+        # print(self._imgpath % img_id)
         img = cv2.imread(self._imgpath % img_id, cv2.IMREAD_COLOR)
         height, width, _ = img.shape
 

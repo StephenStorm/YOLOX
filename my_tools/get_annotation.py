@@ -20,7 +20,7 @@ def get_anno(line):
     save_xml(img_url, bbox, labels)
 
 
-def save_xml(image_path, bbox, label, annotion_dir='/opt/tiger/minist/datasets/groot/Annotations', img_dir = '/opt/tiger/minist/datasets/groot/JPEGImages'):
+def save_xml(image_path, bbox, label, annotion_dir='/opt/tiger/minist/datasets/groot_voc/Annotations', img_dir = '/opt/tiger/minist/datasets/groot_voc/JPEGImages'):
     '''
     将CSV中的一行
     000000001.jpg [[1,2,3,4],...]
@@ -105,7 +105,10 @@ def save_xml(image_path, bbox, label, annotion_dir='/opt/tiger/minist/datasets/g
 
 if __name__ == "__main__":
     # line_list = []
-    json_file = '/opt/tiger/minist/datasets/groot/wy_val_plant-retag-nopeople.json'
+    # json file : 
+    # json_file = '/opt/tiger/minist/datasets/groot/wy_val_plant-retag-nopeople.json'
+    # json_file = '/opt/tiger/minist/data_process/res_data/new_img_path.txt'
+    json_file = '/opt/tiger/minist/data_process/res_data/new_img_in_val.txt'
     with open(json_file, 'r') as jf:
         line_list = jf.readlines()
     

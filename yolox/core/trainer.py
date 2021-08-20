@@ -126,6 +126,7 @@ class Trainer:
 
         # model related init
         torch.cuda.set_device(self.local_rank)
+        # get model form config
         model = self.exp.get_model()
         logger.info(
             "Model Summary: {}".format(get_model_info(model, self.exp.test_size))
