@@ -7,7 +7,6 @@ import torch.nn as nn
 
 from .darknet import CSPDarknet
 from .network_blocks import BaseConv, CSPLayer, DWConv
-from .res_fbnet import FBNetV2, get_bids
 
 
 class YOLOPAFPN(nn.Module):
@@ -20,13 +19,12 @@ class YOLOPAFPN(nn.Module):
         depth=1.0,
         width=1.0,
         in_features=("dark3", "dark4", "dark5"),
-        # in_channels=[256, 512, 1024],
-        in_channels=[128, 256, 2048],
+        in_channels=[256, 512, 1024],
         depthwise=False,
         act="silu",
     ):
         super().__init__()
-        self.backbone = FBNetV2(get_bids())
+        self.backbone = CSPDarknet(depth, width, depthwise=depthwise, act=act)
         self.in_features = in_features
         self.in_channels = in_channels
         Conv = DWConv if depthwise else BaseConv
