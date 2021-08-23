@@ -7,9 +7,6 @@ import torch.nn as nn
 from .yolo_head import YOLOXHead
 from .yolo_pafpn import YOLOPAFPN
 
-# # stephen add
-# import torch
-
 
 class YOLOX(nn.Module):
     """
@@ -57,12 +54,3 @@ class YOLOX(nn.Module):
         outputs[:, :, 3, :] = outputs[:, :, 1, :] + outputs[:, :, 3, :] / 2
         '''
         return outputs
-
-
-# stephen add test use
-# if __name__ == "__main__":
-#     x = torch.zeros((4, 3, 416, 416))
-#     yolox = YOLOX()
-#     y = yolox(x)
-#     print(y.shape)
-

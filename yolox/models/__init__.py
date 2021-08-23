@@ -8,3 +8,5 @@ from .yolo_fpn import YOLOFPN
 from .yolo_head import YOLOXHead
 from .yolo_pafpn import YOLOPAFPN
 from .yolox import YOLOX
+from .SSPACE import SSPACE
+from .micro import FBNetV2Block, Identity, AvgPool, MaxPool, ConvBlock, AdaAvgPool

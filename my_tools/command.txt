@@ -14,7 +14,10 @@ nohup python3 tools/train.py -f exps/example/yolox_voc/yolox_voc_l.py \
 -c /opt/tiger/minist/YOLOX/weight/yolox_l.pth -o 2>&1 &
 
 
-python3 tools/train.py -f exps/example/yolox_voc/yolox_voc_l.py  -d 4 -b 96 --resume -c YOLOX_outputs/yolox_voc_l/latest_ckpt.pth
+CUDA_VISIBLE_DEVICES=4,5,6,7 python3 tools/train.py -f exps/example/yolox_voc/yolox_voc_l.py  -d 4 -b 96 --resume -c YOLOX_outputs/yolox_voc_l/latest_ckpt.pth
 
+
+CUDA_VISIBLE_DEVICES=4,5,6,7 python3 tools/train.py -f exps/example/yolox_voc/yolox_voc_l.py  -d 4 -b 96  -c weight/best_top1.pth
 
 2866427
+

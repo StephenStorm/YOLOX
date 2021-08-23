@@ -5,8 +5,8 @@ from copy import deepcopy
 # from collections import OrderedDict, namedtuple
 # import logging
 import numpy as np
-from SSPACE import SSPACE
-from micro import FBNetV2Block, Identity, AvgPool, MaxPool, ConvBlock, AdaAvgPool
+from .SSPACE import SSPACE
+from .micro import FBNetV2Block, Identity, AvgPool, MaxPool, ConvBlock, AdaAvgPool
 import netron
 
 theta_file_1 = '/opt/tiger/minist/YOLOX/res_fbnet_config/fbnet_029epoch.txt'
@@ -77,7 +77,7 @@ class FBNetV2(nn.Module):
         dim_features = ?
         '''
         super(FBNetV2, self).__init__()
-        self.num_classes = num_classes
+        # self.num_classes = num_classes
         layers, self.names = [], []
         TBS_id, l = 0, 0
         next_in_channel = 64
@@ -135,21 +135,21 @@ class FBNetV2(nn.Module):
             x = layer(x)
             if self.names[idx] in outputs_name:
                 outputs.append(x)
-            print(self.names[idx], x.shape)
+            # print(self.names[idx], x.shape)
         # assert(x.shape[-1] == self.num_classes) 
         return outputs
 
 
-if __name__ == '__main__' :
-    num_classes = 1000
-    bids = get_bids()
-    model = FBNetV2(bids, num_classes, search_micro_1)
-    # print(model)
-    # torch.save(model.state_dict(), '/opt/tiger/minist/tmp/res_fbnet.pth')
-    x = torch.zeros((16, 3, 640, 640))
-    y = model(x)
-    for xx in y:
-        print(xx.shape)
+# if __name__ == '__main__' :
+#     num_classes = 1000
+#     bids = get_bids()
+#     model = FBNetV2(bids, num_classes, search_micro_1)
+#     # print(model)
+#     # torch.save(model.state_dict(), '/opt/tiger/minist/tmp/res_fbnet.pth')
+#     x = torch.zeros((16, 3, 640, 640))
+#     y = model(x)
+#     for xx in y:
+#         print(xx.shape)
     # onnx_path = "/opt/tiger/minist/tmp/res_fbnet.onnx"
     # torch.onnx.export(model, x, onnx_path)
 
