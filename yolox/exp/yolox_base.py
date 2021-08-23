@@ -180,7 +180,7 @@ class Exp(BaseExp):
                     pg2.append(v.bias)  # biases
                 # if isinstance(v, nn.BatchNorm2d) or "bn" in k:
                 if isinstance(v, nn.BatchNorm2d) :
-                    print('pg0 k {}, v {}'.format(k, v))
+                    # print('pg0 k {}, v {}'.format(k, v))
                     pg0.append(v.weight)  # no decay
                 elif hasattr(v, "weight") and isinstance(v.weight, nn.Parameter):
                     pg1.append(v.weight)  # apply decay
