@@ -4,24 +4,11 @@
 
 # VOC_CLASSES = ( '__background__', # always index 0
 VOC_CLASSES = (
-    "aeroplane",
-    "bicycle",
+    "beasts",
     "bird",
-    "boat",
-    "bottle",
-    "bus",
-    "car",
-    "cat",
-    "chair",
-    "cow",
-    "diningtable",
-    "dog",
-    "horse",
-    "motorbike",
+    "fish",
+    "insect",
+    "plant",
     "person",
-    "pottedplant",
-    "sheep",
-    "sofa",
-    "train",
-    "tvmonitor",
 )
+# class_map = {0:'beasts', 1:'bird', 2:'fish', 3:'insect', 4:'plant', 5:'person'}
