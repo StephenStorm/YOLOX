@@ -111,7 +111,6 @@ def main(exp, args):
 
 if __name__ == "__main__":
 
-    
     backbone = YOLOPAFPN(in_channels=[128, 256, 2048])
     
     head = YOLOXHead(num_classes = 6, in_channels=[128, 256, 2048])
@@ -120,7 +119,6 @@ if __name__ == "__main__":
     weight_path = '/opt/tiger/minist/YOLOX/weight/best_top1.pth'
     # pretrain_dict = torch.load(weight_path)
     # model.load_state_dict(pretrain_dict, strict=False)
-    # model.load_state_dict(pretrained_params.state_dict(), strict=False)
     model.eval()
 
     # for k, v in model.named_modules() :
@@ -152,5 +150,11 @@ if __name__ == "__main__":
     x = torch.ones((4, 3, 416, 416))
     y = model(x)
     print(y.shape)
+
+
+    Command Line Args: 
+    Namespace(config_file='configs/PascalVOC-detection/split1/faster_rcnn_R_101_FPN_ft_all1_1shot.yaml', dist_url='tcp://127.0.0.1:50152', 
+    end_iter=-1, eval_all=False, eval_during_train=False, eval_iter=-1, eval_only=False, machine_rank=0, num_gpus=8, num_machines=1, 
+    opts=['MODEL.WEIGHTS', 'checkpoints/faster_rcnn_R_101_FPN_all1/model_reset_surgery.pth'], resume=False, start_iter=-1)
 
     
