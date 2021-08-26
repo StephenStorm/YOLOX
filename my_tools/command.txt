@@ -1,0 +1,38 @@
+python3 tools/demo.py image -n yolox-s -c YOLOX_outputs/yolox_voc_s/best_ckpt.pth --path assets/badcase \
+--conf 0.25 --nms 0.45 --tsize 416 --save_result --device gpu
+
+CUDA_VISIBLE_DEVICES=4,5,6,7 python3 tools/demo.py image -n yolox-l -c YOLOX_outputs/yolox_voc_l/best_ckpt.pth --path assets/badcase \
+--conf 0.25 --nms 0.45 --tsize 416 --save_result --device gpu
+
+
+
+python tools/eval.py -n  yolox-s -c yolox_s.pth -b 64 -d 8 --conf 0.001 [--fp16] [--fuse]
+                         yolox-m
+                         yolox-l
+                         yolox-x
+
+
+nohup python3 tools/train.py -f exps/example/yolox_voc/yolox_voc_l.py \
+-d 4 -b 96 --fp16  \
+-c /opt/tiger/minist/YOLOX/weight/yolox_l.pth -o 2>&1 &
+
+
+CUDA_VISIBLE_DEVICES=4,5,6,7 python3 tools/train.py -f exps/example/yolox_voc/yolox_voc_l.py  -d 4 -b 96 --resume -c YOLOX_outputs/yolox_voc_l/latest_ckpt.pth
+
+
+CUDA_VISIBLE_DEVICES=4,5,6,7 python3 tools/train.py -f exps/example/yolox_voc/yolox_voc_l.py  -d 4 -b 96  -c weight/best_top1.pth
+
+2866427
+
+
+python3 tools/eval.py -n  yolox-s -c yolox_s.pth -b 64 -d 8 --conf 0.001 [--fp16] [--fuse]
+                         yolox-m
+                         yolox-l
+                         yolox-x
+
+python3 tools/eval.py -f exps/example/yolox_voc/yolox_voc_l.py  -c YOLOX_outputs/yolox_voc_lFBnet/latest_ckpt.pth -b 280 -d 8 --conf 0.001
+
+
+python3 tools/train.py -f exps/example/yolox_voc/yolox_voc_l.py  -d 8 -b 280 --resume -c YOLOX_outputs/yolox_voc_lFBnet/latest_ckpt.pth --cache
+
+ohup python3 tools/train.py -f exps/example/yolox_voc/yolox_voc_l.py  -d 8 -b 280 --resume -c YOLOX_outputs/yolox_voc_lFBnet/latest_ckpt.pth --cache 2>&1 &

@@ -18,7 +18,8 @@ class Exp(MyExp):
         self.exp_name = os.path.split(os.path.realpath(__file__))[1].split(".")[0]
         self.input_size = (416, 416)
         self.test_size = (416, 416)
-        self.data_num_workers = 8
+        self.data_num_workers = 16
+        self.basic_lr_per_img = 1e-4 / 64.0
 
     def get_data_loader(self, batch_size, is_distributed, no_aug=False, cache_img=False):
         from yolox.data import (

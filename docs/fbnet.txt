@@ -1,0 +1,18 @@
+修改点：
+    yolox_base :   修改get_model 中的通道数。
+        # if isinstance(v, nn.BatchNorm2d) or "bn" in k:
+        if isinstance(v, nn.BatchNorm2d) :
+
+    模型文件：
+        res_fbnet.py
+        SSPACE
+        micro
+        yolo_pafpn
+        yolox_FBnet
+    yolo_pafpn:
+        # features = [out_features[f] for f in self.in_features]
+        [x2, x1, x0] = out_features
+    voc.py 
+        # line 314 
+        name = self.image_set[0] # 从[0][1] -->[0]
+    
