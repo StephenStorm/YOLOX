@@ -19,7 +19,8 @@ class Exp(MyExp):
         self.input_size = (416, 416)
         self.test_size = (416, 416)
         self.data_num_workers = 16
-        self.basic_lr_per_img = 1e-4 / 64.0
+        self.basic_lr_per_img = 1e-6 / 64.0
+        self.max_epoch = 200
 
     def get_data_loader(self, batch_size, is_distributed, no_aug=False, cache_img=False):
         from yolox.data import (

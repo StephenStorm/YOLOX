@@ -1,6 +1,8 @@
 ### Linux ###
 *~
 
+nohup*.out
+
 # user experiments directory
 YOLOX_outputs/
 datasets/
