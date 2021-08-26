@@ -162,7 +162,9 @@ class YOLOXHead(nn.Module):
             obj_output = self.obj_preds[k](reg_feat)
 
             if self.training:
-                output = torch.cat([reg_output, obj_output, cls_output], 1)
+                # output = torch.cat([reg_output, obj_output, cls_output], 1)
+                output = torch.cat([reg_output, obj_output], 1)
+                output = torch.cat([output, cls_output], 1)
                 output, grid = self.get_output_and_grid(
                     output, k, stride_this_level, xin[0].type()
                 )
@@ -185,8 +187,14 @@ class YOLOXHead(nn.Module):
                     origin_preds.append(reg_output.clone())
 
             else:
+                # output = torch.cat(
+                #     [reg_output, obj_output.sigmoid(), cls_output.sigmoid()], 1
+                # )
                 output = torch.cat(
-                    [reg_output, obj_output.sigmoid(), cls_output.sigmoid()], 1
+                    [reg_output, obj_output.sigmoid()], 1
+                )
+                output = torch.cat(
+                    [output, cls_output.sigmoid()], 1
                 )
 
             outputs.append(output)
@@ -203,11 +211,25 @@ class YOLOXHead(nn.Module):
                 dtype=xin[0].dtype,
             )
         else:
-            self.hw = [x.shape[-2:] for x in outputs]
+            # self.hw = [x.shape[-2:] for x in outputs]
+            self.hw = [x.data.shape[-2:] for x in outputs]
             # [batch, n_anchors_all, 85]
-            outputs = torch.cat(
-                [x.flatten(start_dim=2) for x in outputs], dim=2
-            ).permute(0, 2, 1)
+            # outputs = torch.cat(
+            #     [x.flatten(start_dim=2) for x in outputs], dim=2
+            # ).permute(0, 2, 1)
+            temp = []
+            for out in outputs:
+                shape01 = out.data.shape[:2]
+                # shape2 = out.data.shape[2] * out.data.shape[3]
+                out = out.reshape(*shape01, -1)
+                temp.append(out)
+            output = torch.cat(
+                temp[:2], dim=2
+            )
+            output = torch.cat(
+                (output, temp[2]), dim=2
+            )
+            outputs = output.permute(0, 1, 2)
             if self.decode_in_inference:
                 return self.decode_outputs(outputs, dtype=xin[0].type())
             else:
@@ -234,6 +256,8 @@ class YOLOXHead(nn.Module):
         return output, grid
 
     def decode_outputs(self, outputs, dtype):
+        # stephen add 
+        outputs = outputs.permute(0, 2, 1)
         grids = []
         strides = []
         for (hsize, wsize), stride in zip(self.hw, self.strides):
@@ -245,7 +269,7 @@ class YOLOXHead(nn.Module):
 
         grids = torch.cat(grids, dim=1).type(dtype)
         strides = torch.cat(strides, dim=1).type(dtype)
-
+        # print(outputs.shape, grids.shape, strides.shape)
         outputs[..., :2] = (outputs[..., :2] + grids) * strides
         outputs[..., 2:4] = torch.exp(outputs[..., 2:4]) * strides
         return outputs
