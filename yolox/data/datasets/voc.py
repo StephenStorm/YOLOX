@@ -311,7 +311,7 @@ class VOCDetection(Dataset):
 
     def _do_python_eval(self, output_dir="output", iou=0.5):
         rootpath = self.root
-        name = self.image_set[0][1]
+        name = self.image_set[0]
         annopath = os.path.join(rootpath, "Annotations", "{:s}.xml")
         imagesetfile = os.path.join(rootpath, "ImageSets", "Main", name + ".txt")
         cachedir = os.path.join(

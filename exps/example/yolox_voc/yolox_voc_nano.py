@@ -21,6 +21,7 @@ class Exp(MyExp):
         self.data_num_workers = 8
         self.exp_name = os.path.split(os.path.realpath(__file__))[1].split(".")[0]
         self.enable_mixup = False
+        self.basic_lr_per_img = 1e-6 / 64.0
     
     def get_model(self, sublinear=False):
 
