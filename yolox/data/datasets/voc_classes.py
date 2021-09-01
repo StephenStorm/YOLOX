@@ -10,5 +10,7 @@ VOC_CLASSES = (
     "insect",
     "plant",
     "person",
+    # "dishes_0",
+    # "dishes_1",
 )
 # class_map = {0:'beasts', 1:'bird', 2:'fish', 3:'insect', 4:'plant', 5:'person'}
