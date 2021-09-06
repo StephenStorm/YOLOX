@@ -8,10 +8,11 @@ from loguru import logger
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+# from yolox.models.losses import FocalLoss
 
 from yolox.utils import bboxes_iou
 
-from .losses import IOUloss
+from .losses import IOUloss, FocalLoss
 from .network_blocks import BaseConv, DWConv
 
 
@@ -24,6 +25,7 @@ class YOLOXHead(nn.Module):
         in_channels=[256, 512, 1024],
         act="silu",
         depthwise=False,
+        use_focal_loss = False,
     ):
         """
         Args:
@@ -32,6 +34,7 @@ class YOLOXHead(nn.Module):
         """
         super().__init__()
 
+        self.use_focal_loss = use_focal_loss
         self.n_anchors = 1
         self.num_classes = num_classes
         self.decode_in_inference = True  # for deploy, set to False
@@ -124,7 +127,11 @@ class YOLOXHead(nn.Module):
 
         self.use_l1 = False
         self.l1_loss = nn.L1Loss(reduction="none")
+        # self.bcewithlog_loss = nn.BCEWithLogitsLoss(reduction="none")
         self.bcewithlog_loss = nn.BCEWithLogitsLoss(reduction="none")
+        if self.use_focal_loss :
+            self.bcewithlog_loss = FocalLoss(self.bcewithlog_loss, 2.0)
+
         self.iou_loss = IOUloss(reduction="none")
         self.strides = strides
         self.grids = [torch.zeros(1)] * len(in_channels)
