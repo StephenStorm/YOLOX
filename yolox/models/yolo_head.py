@@ -25,7 +25,7 @@ class YOLOXHead(nn.Module):
         in_channels=[256, 512, 1024],
         act="silu",
         depthwise=False,
-        use_focal_loss = False,
+        use_focal_loss = True,
     ):
         """
         Args:
@@ -127,10 +127,9 @@ class YOLOXHead(nn.Module):
 
         self.use_l1 = False
         self.l1_loss = nn.L1Loss(reduction="none")
-        # self.bcewithlog_loss = nn.BCEWithLogitsLoss(reduction="none")
         self.bcewithlog_loss = nn.BCEWithLogitsLoss(reduction="none")
         if self.use_focal_loss :
-            self.bcewithlog_loss = FocalLoss(self.bcewithlog_loss, 2.0)
+            self.bcewithlog_loss = FocalLoss(self.bcewithlog_loss, 1.5)
 
         self.iou_loss = IOUloss(reduction="none")
         self.strides = strides
@@ -415,13 +414,18 @@ class YOLOXHead(nn.Module):
             loss_l1 = 0.0
 
         reg_weight = 5.0
-        loss = reg_weight * loss_iou + loss_obj + loss_cls + loss_l1
+
+        # stephen add 
+        cls_weight = 1.0
+        obj_weight = 1.0
+
+        loss = reg_weight * loss_iou + obj_weight * loss_obj + cls_weight * loss_cls + loss_l1
 
         return (
             loss,
             reg_weight * loss_iou,
-            loss_obj,
-            loss_cls,
+            10 * loss_obj,
+            10 * loss_cls,
             loss_l1,
             num_fg / max(num_gts, 1),
         )

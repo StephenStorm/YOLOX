@@ -19,7 +19,7 @@ class Exp(MyExp):
         self.test_size = (416, 416)
         self.test_conf = 0.01
         self.nmsthre = 0.65
-        self.basic_lr_per_img = 1e-2 / 640
+        self.basic_lr_per_img = 1e-2 / 704
         self.max_epoch = 300
         self.exp_name = os.path.split(os.path.realpath(__file__))[1].split(".")[0]
 
