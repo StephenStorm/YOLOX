@@ -413,19 +413,20 @@ class YOLOXHead(nn.Module):
         else:
             loss_l1 = 0.0
 
-        reg_weight = 5.0
+        # reg_weight = 5.0
 
         # stephen add 
-        cls_weight = 1.0
-        obj_weight = 1.0
+        cls_weight = 15.0
+        obj_weight = 10.0
+        reg_weight = 3.0
 
         loss = reg_weight * loss_iou + obj_weight * loss_obj + cls_weight * loss_cls + loss_l1
 
         return (
             loss,
             reg_weight * loss_iou,
-            10 * loss_obj,
-            10 * loss_cls,
+            obj_weight * loss_obj,
+            cls_weight * loss_cls,
             loss_l1,
             num_fg / max(num_gts, 1),
         )
