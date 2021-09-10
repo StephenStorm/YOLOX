@@ -18,8 +18,8 @@ def eval():
     # self._write_voc_results_file(all_boxes)
     root = '/opt/tiger/minist/datasets/groot_voc'
     # res_path = '/opt/tiger/minist/datasets/groot_voc/results'
-    # res_path = '/opt/tiger/minist/datasets/results/result_yoloxl_0.25_nms_0.45/'
-    res_path = '/opt/tiger/minist/datasets/results/results_yolox-_official_0.001_0.65'
+    res_path = '/opt/tiger/minist/datasets/results/result_yoloxl_0.001_nms_0.45/'
+    # res_path = '/opt/tiger/minist/datasets/results/results_yolox-_official_0.001_0.65'
     IouTh = np.linspace(
         0.5, 0.95, int(np.round((0.95 - 0.5) / 0.05)) + 1, endpoint=True
     )

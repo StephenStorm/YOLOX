@@ -19,8 +19,8 @@ class Exp(MyExp):
         self.test_size = (416, 416)
         self.test_conf = 0.01
         self.nmsthre = 0.65
-        self.basic_lr_per_img = 1e-2 / 704
-        self.max_epoch = 300
+        self.basic_lr_per_img = 4e-4 / 704
+        self.max_epoch = 350
         self.exp_name = os.path.split(os.path.realpath(__file__))[1].split(".")[0]
 
         # self.mosaic_scale = (0.5, 1.5)
@@ -32,6 +32,11 @@ class Exp(MyExp):
         self.mixup_prob = 1.0
         self.hsv_prob = 1.0
         self.flip_prob = 0.5
+
+        self.print_interval = 5
+        self.eval_interval = 5
+
+        self.no_aug_epochs = 30
 
 
     def get_data_loader(self, batch_size, is_distributed, no_aug=False, cache_img=False):
