@@ -11,10 +11,21 @@ from yolox.exp import Exp as MyExp
 class Exp(MyExp):
     def __init__(self):
         super(Exp, self).__init__()
-        self.num_classes = 20
+        self.num_classes = 6
         self.depth = 0.33
         self.width = 0.50
         self.warmup_epochs = 1
+        self.input_size = (416, 416)
+        self.test_size = (416, 416)
+        self.test_conf = 0.01
+        self.nmsthre = 0.65
+        self.basic_lr_per_img = 5e-3 / 384
+        self.max_epoch = 100
+        self.exp_name = os.path.split(os.path.realpath(__file__))[1].split(".")[0]
+
+        # self.mosaic_scale = (0.5, 1.5)
+        # self.mixup_scale = (0.5, 1.5)
+        self.data_num_workers = 4
 
         # ---------- transform config ------------ #
         self.mosaic_prob = 1.0
@@ -22,7 +33,7 @@ class Exp(MyExp):
         self.hsv_prob = 1.0
         self.flip_prob = 0.5
 
-        self.exp_name = os.path.split(os.path.realpath(__file__))[1].split(".")[0]
+        # self.exp_name = os.path.split(os.path.realpath(__file__))[1].split(".")[0]
 
     def get_data_loader(self, batch_size, is_distributed, no_aug=False, cache_img=False):
         from yolox.data import (
@@ -42,8 +53,8 @@ class Exp(MyExp):
 
         with wait_for_the_master(local_rank):
             dataset = VOCDetection(
-                data_dir=os.path.join(get_yolox_datadir(), "VOCdevkit"),
-                image_sets=[('2007', 'trainval'), ('2012', 'trainval')],
+                data_dir=os.path.join("/opt/tiger/minist/datasets/groot_voc"),
+                image_sets=['train'],
                 img_size=self.input_size,
                 preproc=TrainTransform(
                     max_labels=50,
@@ -100,8 +111,8 @@ class Exp(MyExp):
         from yolox.data import VOCDetection, ValTransform
 
         valdataset = VOCDetection(
-            data_dir=os.path.join(get_yolox_datadir(), "VOCdevkit"),
-            image_sets=[('2007', 'test')],
+            data_dir=os.path.join("/opt/tiger/minist/datasets/groot_voc"),
+            image_sets=['val'],
             img_size=self.test_size,
             preproc=ValTransform(legacy=legacy),
         )
