@@ -166,6 +166,8 @@ class YOLOXHead(nn.Module):
                 output, grid = self.get_output_and_grid(
                     output, k, stride_this_level, xin[0].type()
                 )
+                # output.shape : batch_size, self.n_anchors * hsize * wsize, -1(85)
+                # grid: (1, n, 2) , n 是网格的数量，也可以理解为特征图的像素数量
                 x_shifts.append(grid[:, :, 0])
                 y_shifts.append(grid[:, :, 1])
                 expanded_strides.append(
@@ -215,6 +217,12 @@ class YOLOXHead(nn.Module):
                 return outputs
 
     def get_output_and_grid(self, output, k, stride, dtype):
+        '''
+        output[box(4), obj(1), cls(class_nums)]
+        k: 当前的head【0， 1， 2】
+        strid： 当前的stride【8， 16， 32】
+        '''
+        # output, grid = self.get_output_and_grid(output, k, stride_this_level, xin[0].type())
         grid = self.grids[k]
 
         batch_size = output.shape[0]
