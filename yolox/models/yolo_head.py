@@ -196,11 +196,11 @@ class YOLOXHead(nn.Module):
         if self.training:
             return self.get_losses(
                 imgs,
-                x_shifts,
+                x_shifts, # list 【(1, n1, 1)， (1, n2, 1)， (1, n3,1)】 ni 表示不同特征图的像素数量，也是网格的数量。
                 y_shifts,
-                expanded_strides,
+                expanded_strides, # list # list 【(1, n1)， (1, n2)， (1, n3)】 ni 表示不同特征图的像素数量，也是网格的数量。8， 16， 32
                 labels,
-                torch.cat(outputs, 1),
+                torch.cat(outputs, 1), # list , regoutput, obj_output, cls
                 origin_preds,
                 dtype=xin[0].dtype,
             )
@@ -270,6 +270,19 @@ class YOLOXHead(nn.Module):
         origin_preds,
         dtype,
     ):
+    # '''
+    # self.get_losses(
+    #             imgs,
+    #             x_shifts,
+    #             y_shifts,
+    #             expanded_strides,
+    #             labels,
+    #             torch.cat(outputs, 1),
+    #             origin_preds,
+    #             dtype=xin[0].dtype,
+    #         )
+    # '''
+        # 猜测n_anchors_all是所有 网格的数量 * anchor（1）
         bbox_preds = outputs[:, :, :4]  # [batch, n_anchors_all, 4]
         obj_preds = outputs[:, :, 4].unsqueeze(-1)  # [batch, n_anchors_all, 1]
         cls_preds = outputs[:, :, 5:]  # [batch, n_anchors_all, n_cls]
@@ -465,7 +478,7 @@ class YOLOXHead(nn.Module):
             y_shifts = y_shifts.cpu()
 
         fg_mask, is_in_boxes_and_center = self.get_in_boxes_info(
-            gt_bboxes_per_image,
+            gt_bboxes_per_image, # 单batch内的gt_boxes
             expanded_strides,
             x_shifts,
             y_shifts,
@@ -507,7 +520,7 @@ class YOLOXHead(nn.Module):
         cost = (
             pair_wise_cls_loss
             + 3.0 * pair_wise_ious_loss
-            + 100000.0 * (~is_in_boxes_and_center)
+            + 100000.0 * (~is_in_boxes_and_center) # 把不在考虑范围内的anchor置为很大的数值
         )
 
         (
@@ -542,8 +555,10 @@ class YOLOXHead(nn.Module):
         num_gt,
     ):
         expanded_strides_per_image = expanded_strides[0]
+        # 将网格点坐标通过stride ， 映射会原图坐标
         x_shifts_per_image = x_shifts[0] * expanded_strides_per_image
         y_shifts_per_image = y_shifts[0] * expanded_strides_per_image
+        # 网格的中心点坐标映射会原始图坐标
         x_centers_per_image = (
             (x_shifts_per_image + 0.5 * expanded_strides_per_image)
             .unsqueeze(0)
@@ -554,7 +569,7 @@ class YOLOXHead(nn.Module):
             .unsqueeze(0)
             .repeat(num_gt, 1)
         )
-
+        # 计算gt_box的上下左右边界。
         gt_bboxes_per_image_l = (
             (gt_bboxes_per_image[:, 0] - 0.5 * gt_bboxes_per_image[:, 2])
             .unsqueeze(1)
@@ -576,13 +591,16 @@ class YOLOXHead(nn.Module):
             .repeat(1, total_num_anchors)
         )
 
+        #计算gt_box 的四个边界距离网格中心点的坐标。
         b_l = x_centers_per_image - gt_bboxes_per_image_l
         b_r = gt_bboxes_per_image_r - x_centers_per_image
         b_t = y_centers_per_image - gt_bboxes_per_image_t
         b_b = gt_bboxes_per_image_b - y_centers_per_image
         bbox_deltas = torch.stack([b_l, b_t, b_r, b_b], 2)
 
+        # 网格的中心点是否落在gt_box 内。
         is_in_boxes = bbox_deltas.min(dim=-1).values > 0.0
+        # 是否所有的gt_box都满足，所在网格的中心点在gt_box内。
         is_in_boxes_all = is_in_boxes.sum(dim=0) > 0
         # in fixed center
 
@@ -611,11 +629,17 @@ class YOLOXHead(nn.Module):
 
         # in boxes and in centers
         is_in_boxes_anchor = is_in_boxes_all | is_in_centers_all
-
+        # 两种方式的并集，要么当前网格的中心点落在gtbox内，要么是当前网格的中心点落在 gtbox每条边往外扩张2.5*stride的正方形内。
+        # 其实本代码中的网格就是anchor
+        # 思考： 两种并集为什么不是包含的关系？
+        # 第一种正方形范围： gt_box 中心点加减gt的宽高，也就是说这时候正方形范围是gt的大小
+        # 第二种正方形范围： gt_box 中心点加减2.5*stride的宽高，也就是说这时候正方形范围是gt的大小加减2.5stride。 
+        # 这两种范围会根据gt框和stride的大小造成包含关系，但是谁大谁小不是一定的。
         is_in_boxes_and_center = (
             is_in_boxes[:, is_in_boxes_anchor] & is_in_centers[:, is_in_boxes_anchor]
         )
         return is_in_boxes_anchor, is_in_boxes_and_center
+        
 
     def dynamic_k_matching(self, cost, pair_wise_ious, gt_classes, num_gt, fg_mask):
         # Dynamic K
